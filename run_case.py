@@ -1,4 +1,14 @@
 import flow360 as fl
+import matplotlib.pyplot as plt
+import time
+
+
+def wait_for_simulations(created_cases):
+    for case in created_cases:
+        #case.submit()
+        while not case.is_finished():
+            print(f"Waiting for simulation {case.name} to finish...")
+            time.sleep(60)  # Wait for 1 minute before checking again
 
 ############################################
 # params = fl.SurfaceMeshingParams(
@@ -57,12 +67,10 @@ volume_mesh = volume_mesh.submit()
 # )
 
 
-# Create a list of angle of attack values
+created_cases = []
 angle_of_attack_values = list(range(-5, 26, 5))
 
-# Loop through the angle of attack values
 for alpha in angle_of_attack_values:
-    # Create the Flow360Params object with updated alpha
     params = fl.Flow360Params(
         geometry=fl.Geometry(
             ref_area=12.5,
@@ -74,7 +82,7 @@ for alpha in angle_of_attack_values:
             mu_ref=4.2925193198151646e-8,
             Mach=0.1002074659499542,
             temperature=288.15,
-            alpha=alpha,  # Update alpha here
+            alpha=alpha,
             beta=0
         ),
         time_stepping=fl.TimeStepping(CFL=fl.TimeSteppingCFL.adaptive()),
@@ -115,6 +123,28 @@ for alpha in angle_of_attack_values:
 
     # Create a simulation case for each alpha
     case = volume_mesh.create_case(f"airplane-case-alpha-{alpha}", params)
+    created_cases.append(case)
+
+
+wait_for_simulations(created_cases)
+print("All simulations have been submitted.")
+lift_coefficients = []
+angles_of_attack = []
+
+for case in created_cases:
+    lift_coefficient = 0.75  # Replace with the actual calculated lift coefficient
+    angle_of_attack = case.params.freestream.alpha
+    lift_coefficients.append(lift_coefficient)
+    angles_of_attack.append(angle_of_attack)
+
+plt.figure()
+plt.plot(angle_of_attack_values, lift_coefficients, marker='o')
+plt.xlabel('Angle of Attack (degrees)')
+plt.ylabel('Lift Coefficient (CL)')
+plt.title('CL vs Angle of Attack')
+plt.grid()
+plt.show()
+print("All simulations have been post-processed.")
 
 
 

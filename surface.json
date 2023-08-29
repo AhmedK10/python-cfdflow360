@@ -1,6 +1,6 @@
 {
-	"maxEdgeLength": 0.08,
-	"curvatureResolutionAngle": 10,
+	"maxEdgeLength": 0.16,
+	"curvatureResolutionAngle": 15,
 	"growthRate": 1.2,
 	"edges": {
 		"leadingEdge": {

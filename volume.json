@@ -1,0 +1,7 @@
+{
+	"refinementFactor": 1.2,
+	"volume": {
+		"firstLayerThickness": 0.000002,
+		"growthRate": 1.1
+	}
+}
